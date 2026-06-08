@@ -14,8 +14,10 @@ import { COLORS, SPACING, FONT_SIZE } from "../../../shared/constants/theme";
 import Button from "../../../shared/components/common/Button";
 import Input from "../../../shared/components/common/Input";
 import kinalSportsLogo from "../../../../assets/kinal_sports.png";
+import { useAuth } from "../hooks/useAuth.js";
 
 const LoginScreen = ({navigation}) => {
+    const { handleLogin, login } = useAuth();
     const { control, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             emailorUsername: "",
@@ -23,8 +25,14 @@ const LoginScreen = ({navigation}) => {
         }
     });
 
-    const onSubmit = (data) => {
-
+    const onSubmit = async (data) => {
+        try{
+            await handleLogin(data);
+        } catch (error) {
+            console.error(error);
+            const message = error.response?.data?.message || "Error al iniciar sesión";
+            Alert.alert("Error", message);
+        }
     }
 
     return (

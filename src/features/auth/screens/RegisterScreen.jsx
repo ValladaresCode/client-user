@@ -15,9 +15,10 @@ import { COLORS, SPACING, FONT_SIZE } from "../../../shared/constants/theme";
 import Button from "../../../shared/components/common/Button";
 import Input from "../../../shared/components/common/Input";
 import kinalSportsLogo from "../../../../assets/kinal_sports.png";
+import { useAuth } from "../hooks/useAuth.js";
 
 const RegisterScreen = ({ navigation }) => {
-
+    const { handleRegister, loading } = useAuth();
     const { control, handleSubmit, formState: { errors } } = useForm({
         defaultValues: {
             name: "",
@@ -29,8 +30,16 @@ const RegisterScreen = ({ navigation }) => {
         },
     });
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
+        try {
+            await handleRegister(data);
 
+            Alert.alert("Éxito", "Registro exitoso, ahora puedes iniciar sesión", [{text: "OK", onPress: () => navigation.navigate("Login")}]);
+        } catch (error) {
+            console.error(error);
+            const message = error.response?.data?.message || "Error al registrarse";
+            Alert.alert("Error", message);
+        }
     }
 
     return (
